@@ -23,7 +23,7 @@ description: 번개장터 판매글 쓰기를 상품 폴더, 사진, 템플릿, 
 
 - `/bunjang-sales`: 설정 흐름부터 실행한 뒤 `products/` 아래 상품 디렉토리를 순서대로 처리한다.
 - `/bunjang-sales <product-dir>`: 설정 흐름부터 실행한 뒤 `products/3xl` 같은 지정 상품 디렉토리 하나만 처리한다.
-- `/bunjang-sales setup`: 판매글 작성 없이 CDP 브라우저 연결, 번개장터 열기, 로그인 확인만 진행한다.
+- `/bunjang-sales setup`: 판매글 작성 없이 CDP 브라우저 연결을 확인한 뒤 `https://m.bunjang.co.kr/login`을 열고 로그인 확인만 진행한다.
 
 ## 사용하지 않는 경우
 
@@ -35,14 +35,20 @@ description: 번개장터 판매글 쓰기를 상품 폴더, 사진, 템플릿, 
 ## 설정 흐름
 
 1. 기존 Chrome DevTools Protocol 브라우저를 우선 사용한다. `http://127.0.0.1:9223/json/version`을 먼저 확인하고, 실패하면 `9222`를 확인한다.
+   - 연결 성공은 `/json/version`이 JSON을 반환하고 `webSocketDebuggerUrl`이 있는 경우로만 본다.
+   - 연결한 포트 번호를 기록한다. 포트 확인 없이 브라우저가 연결됐다고 보고하지 않는다.
 2. 연결된 브라우저가 없으면 디버깅 포트로 Chrome을 실행한다. macOS:
 
    ```bash
    open -na "Google Chrome" --args --remote-debugging-port=9223 --user-data-dir="$HOME/.bunjang-sales/chrome-profile"
    ```
 
-3. 실행 중인 브라우저에 자동화를 연결한다. 예: Playwright `chromium.connectOverCDP("http://127.0.0.1:9223")`.
-4. 번개장터 판매 흐름을 연다. 로그인되어 있지 않으면 로그인 페이지나 모달을 열고, 사용자가 로그인을 완료했다고 확인할 때까지 멈춘다.
+3. Chrome 실행 뒤에도 다시 `http://127.0.0.1:9223/json/version`을 확인한다. `open` 명령이 성공했더라도 CDP 포트가 열리지 않으면 연결 실패로 보고하고 멈춘다.
+4. 실행 중인 브라우저에 자동화를 연결한다. 예: Playwright `chromium.connectOverCDP("http://127.0.0.1:{port}")`.
+5. `setup` 명령에서는 판매 흐름이나 `/sell`을 열지 않는다. 연결 확인 후 새 탭 또는 현재 자동화 탭을 명확히 `https://m.bunjang.co.kr/login`으로 이동시킨다.
+6. `setup` 명령에서는 이동 요청 URL이 정확히 `https://m.bunjang.co.kr/login`이었는지 확인한다. 번개장터가 쿼리 문자열을 자동으로 붙일 수 있으므로 최종 URL은 `https://m.bunjang.co.kr/login` 또는 `https://m.bunjang.co.kr/login?...`만 허용한다. 다른 경로이면 한 번 더 `https://m.bunjang.co.kr/login`으로 이동시킨 뒤 확인한다.
+7. 로그인되어 있지 않으면 소셜 로그인을 직접 시도하지 않고 로그인 페이지가 보이는 상태에서 멈춘다. 사용자가 로그인을 완료했다고 확인할 때까지 계속하지 않는다.
+8. 초안 작성 명령에서는 로그인 확인 뒤에만 번개장터 판매 흐름을 연다. 로그인 필요 상태면 `https://m.bunjang.co.kr/login`을 열고 멈춘다.
 
 ## 초안 시작 체크리스트
 
@@ -53,8 +59,8 @@ description: 번개장터 판매글 쓰기를 상품 폴더, 사진, 템플릿, 
    - 상품 디렉토리 인자가 있으면 해당 디렉토리 하나만 대상으로 한다.
 2. `products/ai-context.md`를 읽고, 해당 디렉토리에 사용자 상품 사진 후보가 1장 이상 있는지 확인한다. `official-*` 대표 이미지와 `upload-*` 정제본은 사용자 상품 사진으로 세지 않는다.
 3. 사용자 상품 사진이 없으면 작업을 멈추고 어떤 상품 디렉토리에 사진이 필요한지 사용자에게 알린다.
-4. 설정 흐름을 실행한다. 연결된 CDP 브라우저가 없으면 Chrome을 실행한다.
-5. 번개장터 판매 흐름을 연다. 로그인이 필요하면 로그인 페이지나 모달을 보여주고 사용자에게 로그인을 요청한다. 사용자가 로그인 완료를 확인할 때까지 계속하지 않는다.
+4. 설정 흐름을 실행한다. 연결된 CDP 브라우저가 없으면 Chrome을 실행하고, `/json/version`으로 연결을 다시 확인한다.
+5. 로그인이 필요하면 `https://m.bunjang.co.kr/login`을 보여주고 사용자에게 로그인을 요청한다. 사용자가 로그인 완료를 확인할 때까지 판매 흐름으로 이동하지 않는다.
 
 ## 초안 작성 흐름
 
@@ -69,7 +75,7 @@ description: 번개장터 판매글 쓰기를 상품 폴더, 사진, 템플릿, 
 
 - `/bunjang-sales`는 처리 가능한 각 상품 디렉토리마다 번개장터 판매글 초안 탭을 준비한다.
 - `/bunjang-sales <product-dir>`는 지정한 상품 디렉토리 하나의 판매글 초안만 준비한다.
-- `/bunjang-sales setup`은 판매글을 작성하지 않고 브라우저 연결과 로그인 확인만 끝낸다.
+- `/bunjang-sales setup`은 판매글을 작성하지 않고 CDP 브라우저 연결을 확인한 뒤 `https://m.bunjang.co.kr/login`에서 로그인 확인만 끝낸다.
 - 모든 초안 작성 결과는 사용자가 등록 전에 직접 검토할 수 있는 상태로 멈춘다.
 
 ## 책임 경계
@@ -113,6 +119,8 @@ description: 번개장터 판매글 쓰기를 상품 폴더, 사진, 템플릿, 
 
 ## 완료 보고 전 검증
 
+- `setup`만 실행한 경우 CDP `/json/version` 확인 결과, 연결 포트, 현재 탭 URL, 로그인 필요 여부를 보고한다.
+- `setup`만 실행한 경우 이동 요청 URL이 `https://m.bunjang.co.kr/login`이 아니거나 최종 URL 경로가 `/login`이 아니면 완료로 보고하지 않는다.
 - 이미지 개수가 의도한 업로드 목록과 일치하고 눈에 띄는 중복이 없다.
 - 제목, 카테고리, 상태, 사이즈, 설명, 가격, 배송비, 직거래 여부, 장소가 올바르게 입력되어 있다.
 - 태그가 하나의 문자열로 붙어 있지 않고 각각 칩으로 분리되어 있다.
