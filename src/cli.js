@@ -97,7 +97,7 @@ export function buildCapabilityArgs(id, params = {}) {
     case "chat.read":
       return compact([capability.command, capability.subcommand, required(params.threadId, "threadId")]);
     case "chat.start":
-      return buildChatStartArgs(params);
+      return buildChatStartArgs(capability, params);
     case "chat.send":
       return [
         capability.command,
@@ -180,8 +180,8 @@ function buildSearchArgs(command, params) {
 
   if (params.withDetail) args.push("--with-detail");
   if (params.ai) args.push("--ai");
-  if (params.output) args.push("--output", String(params.output));
-  if (params.concurrency) args.push("--concurrency", String(params.concurrency));
+  appendOption(args, "--output", params.output);
+  appendOption(args, "--concurrency", params.concurrency);
 
   return args;
 }
@@ -198,8 +198,12 @@ function buildAgentSearchRankArgs(command, params) {
   return args;
 }
 
-function buildChatStartArgs(params) {
-  const args = ["chat", "start", required(params.listingId, "listingId")];
+function buildChatStartArgs(capability, params) {
+  const args = [
+    capability.command,
+    capability.subcommand,
+    required(params.listingId, "listingId")
+  ];
 
   if (params.message) {
     args.push("--message", String(params.message));
