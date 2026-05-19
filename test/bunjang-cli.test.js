@@ -207,6 +207,13 @@ test("npm run bunjang invokes the configured bunjang-cli binary through the wrap
   });
 });
 
+test("npm run bunjang reports invalid paramsJson clearly", async () => {
+  const result = await runNpmBunjang(["search.listings", "{not-json"]);
+
+  assert.notEqual(result.exitCode, 0);
+  assert.match(result.stderr, /Invalid paramsJson:/);
+});
+
 test("npm run bunjang blocks denied capabilities before spawning bunjang-cli", async () => {
   await withTempDir("bunjang-cli-deny-", async (dir) => {
     const fakeBin = join(dir, "should-not-run");

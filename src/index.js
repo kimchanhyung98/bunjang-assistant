@@ -30,7 +30,13 @@ function parseParams(paramsJson) {
     return {};
   }
 
-  const params = JSON.parse(paramsJson);
+  let params;
+
+  try {
+    params = JSON.parse(paramsJson);
+  } catch (error) {
+    throw new Error(`Invalid paramsJson: ${error.message}`);
+  }
 
   if (!params || typeof params !== "object" || Array.isArray(params)) {
     throw new Error("paramsJson must be a JSON object");
