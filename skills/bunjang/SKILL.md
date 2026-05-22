@@ -1,6 +1,6 @@
 ---
 name: bunjang
-description: macOS의 Codex 또는 Claude Code에서 bunjang-assistant와 bunjang-cli를 사용할 때 적용한다. 번개장터 시세 조회, 상품 검색과 후보 순위화, 상품 상세 확인, 채팅, 관심상품, 구매 가능 여부 확인, 사용자가 지정한 상품 디렉토리 기반 판매글 초안 작성을 처리한다. 번개장터툴, 번개장터 도구, 번장툴, bunjang tool, bunjang tools, bunjang assistant 별칭에도 적용한다.
+description: macOS의 Codex, Claude 등 AI 에이전트에서 bunjang-assistant와 bunjang-cli를 사용할 때 적용한다. 번개장터 시세 조회, 상품 검색과 후보 순위화, 상품 상세 확인, 채팅, 관심상품, 구매 가능 여부 확인, 사용자가 지정한 상품 디렉토리 기반 판매글 초안 작성을 처리한다. 번개장터툴, 번개장터 도구, 번장툴, bunjang tool, bunjang tools, bunjang assistant 별칭에도 적용한다.
 ---
 
 # bunjang
@@ -59,7 +59,7 @@ description: macOS의 Codex 또는 Claude Code에서 bunjang-assistant와 bunjan
 - `등록하기`를 누르지 않습니다.
 - 최종 구매 확정을 실행하지 않습니다.
 - 계정 설정을 변경하지 않습니다.
-- 사용자 촬영 사진, 로그인 정보, 계정 정보는 외부 서비스에 업로드하지 않습니다.
+- 사용자 촬영 사진, 로그인 정보, 계정 정보는 번개장터 판매글 입력 외 제3자 서비스(이미지 호스팅, 외부 분석/OCR API, 클라우드 저장소 등)에 업로드하지 않습니다.
 - 고객/클라이언트용 기업 표면, Cursor, Desktop MCP, 호스팅 문서, 다국어 릴리스, 스케줄러를 추가하지 않습니다.
 
 이 스킬은 공개 진입점만 제공합니다. 세부 실행 지침은 모두 `references/` 아래 내부 자산으로 유지합니다.

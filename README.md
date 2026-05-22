@@ -1,6 +1,6 @@
 # bunjang-assistant
 
-번개장터 운영을 로컬 Mac에서 Codex 또는 Claude와 함께 처리하기 위한 AI 툴킷입니다.
+번개장터 운영을 로컬 Mac에서 Codex, Claude 등 AI 에이전트와 함께 처리하기 위한 AI 툴킷입니다.
 
 이 저장소는 번개장터 운영을 AI 에이전트와 함께 처리하기 위한 로컬 툴킷입니다. `bunjang-cli` 자체를 대체하지 않고, AI 실행 표면 메타데이터, 설치 헬퍼, 단일 공개 스킬, 그리고 `bunjang-cli`를 안전하게 호출하는 Node 래퍼를 제공합니다.
 
@@ -8,7 +8,7 @@
 flowchart LR
   Toolkit["bunjang-assistant"] --> CLI["bunjang-cli"]
   Toolkit --> Codex["Codex"]
-  Toolkit --> Claude["Claude Code"]
+  Toolkit --> Claude["Claude"]
   Codex --> CLI
   Claude --> CLI
 ```
@@ -16,8 +16,7 @@ flowchart LR
 ## 지원 범위
 
 - macOS Intel, Apple Silicon
-- Codex CLI/App
-- Claude Code
+- Codex, Claude 등
 - 로컬 개인/소규모 공유 운영
 
 범위 밖:
@@ -38,11 +37,11 @@ npm test
 ```bash
 node install/bunjang-assistant-install.mjs --tool cli
 node install/bunjang-assistant-install.mjs --tool codex --dry-run
-node install/bunjang-assistant-install.mjs --tool claude-code --dry-run
+node install/bunjang-assistant-install.mjs --tool claude --dry-run
 node install/bunjang-assistant-install.mjs --tool both --dry-run
 ```
 
-`--tool cli`는 `npm install` 뒤 `npm run bunjang -- auth.status`로 래퍼 준비 상태를 확인합니다.
+`--tool cli`는 `npm install` 뒤 `npm run bunjang -- auth.status`로 래퍼 준비 상태를 확인합니다. `codex`, `claude`, `both` 설치도 기본적으로 같은 CLI 준비 확인을 먼저 수행하며, 표면 연결만 확인하려면 `--no-install-cli`를 함께 사용합니다.
 
 ## 요청 예시
 
@@ -167,7 +166,7 @@ src/
 
 ## 운영 범위
 
-- macOS Intel/Apple Silicon, Codex, Claude Code만 고려합니다.
+- macOS Intel/Apple Silicon, Codex, Claude 등만 고려합니다.
 - Cursor, Claude Desktop MCP 번들, Windows/Linux 설치기, 웹 문서 사이트는 제외합니다.
 - 고객/클라이언트 제공용 기업 워크플로가 아니라 개인/소규모 공유 운영용입니다.
 - `bunjang-cli`가 제공하지 않는 기능은 툴킷에서 꾸며내지 않습니다.

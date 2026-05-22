@@ -6,8 +6,8 @@
 
 | 표면 | 주요 파일 | 상태 |
 | --- | --- | --- |
-| Codex CLI/App | `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json`, `skills/bunjang/` | 지원 |
-| Claude Code | `.claude-plugin/plugin.json`, `skills/bunjang/` | 지원 |
+| Codex | `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json`, `skills/bunjang/` | 지원 |
+| Claude | `.claude-plugin/plugin.json`, `skills/bunjang/` | 지원 |
 | 에이전트 스킬 대체 경로 | `skills/bunjang/` | 지원 |
 | Claude Desktop local MCP | 제공하지 않음 | 범위 밖 |
 | Cursor | 제공하지 않음 | 범위 밖 |

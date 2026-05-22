@@ -44,6 +44,25 @@ npm run bunjang -- search.listings '{"query":"아이폰 15 128GB","maxItems":20,
 
 관심상품 변경은 상태 변경입니다. 실행 뒤 어떤 listing에 어떤 변경을 했는지 보고합니다.
 
+## 찜한 상품 가격 보강
+
+"찜한 상품 가격 알려줘", "찜했던거 가격 알려줘", "관심상품 시세" 요청은 다음 순서로 처리합니다.
+
+1. `favorite.list`로 현재 관심상품 목록을 조회합니다.
+2. 결과에서 `listingId`를 모읍니다.
+3. 가격이나 상태 정보가 누락되어 있거나 사용자가 최신가를 원하면 `item.list`에 `listingIds`를 전달해 상세를 보강합니다.
+4. 응답에는 각 listing의 `listingId`, 제목, 현재가, 품절/삭제 여부를 요약합니다.
+5. 가격 변동은 CLI 결과나 사용자가 제공한 이전 가격 스냅샷이 있을 때만 보고합니다.
+
+호출 예:
+
+```bash
+npm run bunjang -- favorite.list
+npm run bunjang -- item.list '{"listingIds":["123456","789012"]}'
+```
+
+`favorite.list`는 로그인 사전 확인이 필요합니다. `login_required`면 보강 단계로 넘어가지 않고 멈춥니다.
+
 ## 구매 가능 여부
 
 - `listingId`로 `purchase.prepare`

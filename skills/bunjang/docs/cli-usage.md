@@ -26,7 +26,7 @@ npm run bunjang -- purchase.prepare '{"listingId":"123456"}'
 ```bash
 node install/bunjang-assistant-install.mjs --tool cli
 node install/bunjang-assistant-install.mjs --tool codex --dry-run
-node install/bunjang-assistant-install.mjs --tool claude-code --dry-run
+node install/bunjang-assistant-install.mjs --tool claude --dry-run
 node install/bunjang-assistant-install.mjs --tool both --dry-run
 ```
 
