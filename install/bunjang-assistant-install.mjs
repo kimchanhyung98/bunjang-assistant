@@ -30,14 +30,13 @@ function usage() {
   console.log(`bunjang-assistant installer
 
 Usage:
-  npx -y github:kimchanhyung98/bunjang-assistant --tool cli|codex|claude-code|both [options]
-  npm exec --yes --package github:kimchanhyung98/bunjang-assistant -- bunjang-assistant --tool cli|codex|claude-code|both [options]
-  node install/bunjang-assistant-install.mjs --tool cli|codex|claude-code|both [options]
+  npx -y github:kimchanhyung98/bunjang-assistant --tool cli|codex|claude|both [options]
+  npm exec --yes --package github:kimchanhyung98/bunjang-assistant -- bunjang-assistant --tool cli|codex|claude|both [options]
+  node install/bunjang-assistant-install.mjs --tool cli|codex|claude|both [options]
 
 Options:
-  --tool cli|codex|claude|claude-code|both
-                              Target surface. "claude" is an alias for Claude Code.
-                              "cli" installs local npm dependencies only.
+  --tool cli|codex|claude|both
+                              Target AI assistant surface or "cli" for npm dependencies only.
   --scope user|project|local  Install scope for skills/plugins. Default: user.
   --skill-mode copy|symlink   Skill install mode. Default: copy.
   --with-skill                Also install the public bunjang skill discovery bundle.
@@ -53,7 +52,8 @@ Options:
 
 Notes:
   - Supported runtime targets are macOS Intel and Apple Silicon.
-  - Supported AI surfaces are Codex and Claude Code.
+  - Supported AI surfaces are Codex and Claude.
+  - Codex/Claude installs also prepare the local CLI wrapper by default; use --no-install-cli to skip it.
   - Cursor, Claude Desktop MCP, Windows, and Linux installers are intentionally out of scope.
   - The CLI execution engine remains bunjang-cli through this repo's wrapper.`);
 }
@@ -123,7 +123,7 @@ function parseArgs(argv) {
 
   if (!opts.tool) fail("--tool is required");
   if (!["cli", "codex", "claude", "both"].includes(opts.tool)) {
-    fail("--tool must be cli, codex, claude-code, or both");
+    fail("--tool must be cli, codex, claude, or both");
   }
   if (!["user", "project", "local"].includes(opts.scope)) {
     fail("--scope must be user, project, or local");
@@ -141,9 +141,6 @@ function normalizeTool(value) {
     cli: "cli",
     codex: "codex",
     claude: "claude",
-    "claude-code": "claude",
-    "claude_cli": "claude",
-    "claude-cli": "claude",
     both: "both"
   };
   return aliases[normalized] || normalized;
@@ -204,6 +201,24 @@ function isLocalSource(source) {
   return source.startsWith("/") || source.startsWith("./") || source.startsWith("../") || source.startsWith("~");
 }
 
+const ALLOWED_REMOTE_SOURCE_HOSTS = new Set([
+  "github.com/kimchanhyung98/bunjang-assistant",
+  "github.com/kimchanhyung98/bunjang-assistant.git"
+]);
+
+function assertAllowedSource(source) {
+  if (isLocalSource(source)) return;
+  if (source === PUBLIC_GIT_SOURCE) return;
+  const stripped = source.replace(/^https?:\/\//, "").replace(/\.git$/, "");
+  for (const allowed of ALLOWED_REMOTE_SOURCE_HOSTS) {
+    const normalizedAllowed = allowed.replace(/\.git$/, "");
+    if (stripped === normalizedAllowed) return;
+  }
+  fail(
+    `--source ${source} is not in the allowed list. Only the official bunjang-assistant repo or a local path is accepted.`
+  );
+}
+
 function defaultSkillTarget(tool, scope) {
   if (scope === "project" || scope === "local") {
     return join(process.cwd(), tool === "codex" ? ".codex/skills" : ".claude/skills");
@@ -228,7 +243,9 @@ function removeSkillIfReplacing(tool, opts) {
 function installSkill(tool, opts) {
   removeSkillIfReplacing(tool, opts);
   const target = defaultSkillTarget(tool, opts.scope);
-  mkdirSync(dirname(target), { recursive: true });
+  if (!opts.dryRun) {
+    mkdirSync(dirname(target), { recursive: true });
+  }
   run("bash", [
     join(REPO_ROOT, "install", "install-skills.sh"),
     "--tool",
@@ -256,12 +273,46 @@ function shouldInstallCli(opts) {
 
 function installCli(opts) {
   run("npm", ["install"], opts);
+  const authStatusResult = run(
+    "npm",
+    ["run", "--silent", "bunjang", "--", "auth.status"],
+    opts,
+    { allowFailure: true, capture: true }
+  );
+  warnIfCommandFailed(authStatusResult, "npm run bunjang -- auth.status", opts);
+}
+
+function recordWarning(opts, message) {
+  opts.warnings.push(message);
+  if (!opts.json) {
+    console.warn(`warning: ${message}`);
+  }
+}
+
+function warnIfCommandFailed(result, label, opts) {
+  if (!result || result.status === 0) return;
+  const message = (result.stderr || result.stdout || "").trim();
+  recordWarning(
+    opts,
+    message ? `${label} failed (status ${result.status}): ${message}` : `${label} failed with status ${result.status}`
+  );
+}
+
+function warnIfRemoveSkipped(result, label, opts) {
+  if (!result || result.status === 0) return;
+  const message = (result.stderr || result.stdout || "").trim();
+  recordWarning(
+    opts,
+    message ? `${label} skipped (status ${result.status}): ${message}` : `${label} skipped with status ${result.status}`
+  );
 }
 
 function installCodex(opts) {
   requireCommand("codex", opts);
+  assertAllowedSource(opts.source);
   if (opts.replace) {
-    run("codex", ["plugin", "marketplace", "remove", MARKETPLACE_NAME], opts, { allowFailure: true, capture: true });
+    const removeResult = run("codex", ["plugin", "marketplace", "remove", MARKETPLACE_NAME], opts, { allowFailure: true, capture: true });
+    warnIfRemoveSkipped(removeResult, "codex plugin marketplace remove", opts);
   }
   const addArgs = ["plugin", "marketplace", "add"];
   if (opts.ref && !isLocalSource(opts.source)) addArgs.push("--ref", opts.ref);
@@ -271,23 +322,36 @@ function installCodex(opts) {
 
 function installClaude(opts) {
   requireCommand("claude", opts);
+  assertAllowedSource(opts.source);
   if (opts.replace) {
-    run("claude", ["plugin", "uninstall", PLUGIN_ID, "--scope", opts.scope, "--keep-data", "-y"], opts, { allowFailure: true, capture: true });
-    run("claude", ["plugin", "marketplace", "remove", MARKETPLACE_NAME], opts, { allowFailure: true, capture: true });
+    const uninstallResult = run("claude", ["plugin", "uninstall", PLUGIN_ID, "--scope", opts.scope, "--keep-data", "-y"], opts, { allowFailure: true, capture: true });
+    warnIfRemoveSkipped(uninstallResult, "claude plugin uninstall", opts);
+    const removeResult = run("claude", ["plugin", "marketplace", "remove", MARKETPLACE_NAME], opts, { allowFailure: true, capture: true });
+    warnIfRemoveSkipped(removeResult, "claude plugin marketplace remove", opts);
   }
   run("claude", ["plugin", "marketplace", "add", expandHome(opts.source)], opts);
   run("claude", ["plugin", "install", PLUGIN_ID, "--scope", opts.scope], opts);
 }
 
-function assertMac() {
+function assertMac(opts) {
   if (platform() === "darwin") return;
-  console.error("warning: bunjang-assistant installer is only supported on macOS; continuing for dry-run or metadata validation.");
+  if (opts && opts.dryRun) {
+    recordWarning(opts, "non-macOS detected; continuing for dry-run/metadata validation only.");
+    return;
+  }
+  fail("bunjang-assistant installer requires macOS (Intel or Apple Silicon)");
+}
+
+function shouldValidateSource(opts) {
+  return ["codex", "claude", "both"].includes(opts.tool);
 }
 
 function main() {
   const opts = parseArgs(process.argv.slice(2));
   opts.steps = [];
-  assertMac();
+  opts.warnings = [];
+  assertMac(opts);
+  if (shouldValidateSource(opts)) assertAllowedSource(opts.source);
 
   if (shouldInstallCli(opts)) installCli(opts);
 
@@ -304,7 +368,8 @@ function main() {
     tool: opts.tool,
     scope: opts.scope,
     source: opts.source,
-    steps: opts.steps
+    steps: opts.steps,
+    warnings: opts.warnings
   };
 
   if (opts.json) {
