@@ -70,7 +70,10 @@ test("public bunjang skill routes price and sales draft requests", async () => {
   assert.match(sales, /등록하기/);
   assert.match(aiContext, /사용자가 지정한 상품 루트/);
   assert.match(aiContext, /스킬 내부 리소스/);
+  assert.match(aiContext, /가격 근거 부족\(확인 필요\)/);
+  assert.doesNotMatch(aiContext, /가격 근거 부족으로 보고하고 현재 상품 처리를 중단/);
   assert.match(template, /번개장터 판매글 템플릿/);
+  assert.doesNotMatch(template, /\[USED\]/);
   assert.doesNotMatch(skill + sales + aiContext, /products\/ai-context|products\/template/);
 });
 
@@ -81,6 +84,7 @@ test("installer metadata excludes unsupported surfaces", async () => {
   const cliUsage = await readText("skills/bunjang/docs/cli-usage.md");
   const claudePlugin = await readJson(".claude-plugin/plugin.json");
   const claudeManifest = await readJson(".claude-plugin/manifest.json");
+  const claudeMarketplace = await readJson(".claude-plugin/marketplace.json");
 
   assert.match(installer, /--tool cli\|codex\|claude\|both/);
   assert.match(installer, /Cursor, Claude Desktop MCP, Windows, and Linux installers are intentionally out of scope/);
@@ -90,6 +94,8 @@ test("installer metadata excludes unsupported surfaces", async () => {
   assert.doesNotMatch(supportMatrix, /commands\/bunjang\.md/);
   assert.equal(claudePlugin.commands, undefined);
   assert.equal(claudeManifest.commands, undefined);
+  assert.deepEqual(claudeMarketplace.owner, { name: "kimchanhyung98" });
+  assert.equal(claudeMarketplace.plugins[0].source, "./");
   assert.match(cliUsage, /node install\/bunjang-assistant-install\.mjs --tool codex --dry-run/);
   assert.match(cliUsage, /별도 명령어를 제공하지 않고/);
 });
