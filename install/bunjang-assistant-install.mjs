@@ -179,7 +179,7 @@ function run(command, args, opts, options = {}) {
 }
 
 function commandExists(command) {
-  const result = spawnSync("sh", ["-lc", `command -v ${quote(command)}`], {
+  const result = spawnSync("sh", ["-c", `command -v ${quote(command)}`], {
     stdio: "ignore"
   });
   return result.status === 0;
@@ -209,9 +209,13 @@ const ALLOWED_REMOTE_SOURCE_HOSTS = new Set([
 function assertAllowedSource(source) {
   if (isLocalSource(source)) return;
   if (source === PUBLIC_GIT_SOURCE) return;
-  const stripped = source.replace(/^https?:\/\//, "").replace(/\.git$/, "");
+  const protocolMatch = source.match(/^([A-Za-z][A-Za-z0-9+.-]*):\/\//);
+  if (protocolMatch && protocolMatch[1] !== "https") {
+    fail("--source must use https:// for remote repositories");
+  }
+  const stripped = source.replace(/^https:\/\//, "").replace(/\/+$/, "").replace(/\.git$/, "");
   for (const allowed of ALLOWED_REMOTE_SOURCE_HOSTS) {
-    const normalizedAllowed = allowed.replace(/\.git$/, "");
+    const normalizedAllowed = allowed.replace(/\/+$/, "").replace(/\.git$/, "");
     if (stripped === normalizedAllowed) return;
   }
   fail(

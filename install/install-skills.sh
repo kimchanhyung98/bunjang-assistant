@@ -40,12 +40,23 @@ fail() {
 }
 
 canonical_path() {
-  python3 - "$1" <<'PY'
-import os
-import sys
+  path=$1
+  if [ -L "$path" ]; then
+    link_target=$(readlink "$path") || return 1
+    case "$link_target" in
+      /*) path=$link_target ;;
+      *) path="$(dirname -- "$path")/$link_target" ;;
+    esac
+  fi
 
-print(os.path.realpath(sys.argv[1]))
-PY
+  if [ -d "$path" ]; then
+    (CDPATH='' cd -P -- "$path" && pwd -P)
+    return
+  fi
+
+  dir=$(dirname -- "$path")
+  base=$(basename -- "$path")
+  (CDPATH='' cd -P -- "$dir" && printf '%s/%s\n' "$(pwd -P)" "$base")
 }
 
 resolve_default_target() {
