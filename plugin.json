@@ -1,0 +1,35 @@
+{
+  "name": "bunjang-assistant",
+  "version": "0.2.0",
+  "description": "Run Bunjang tasks from Codex and Claude on macOS — market price lookup, listing search and ranking, chat and favorites management, and sales draft generation.",
+  "author": {
+    "name": "kimchanhyung98",
+    "url": "https://github.com/kimchanhyung98"
+  },
+  "homepage": "https://github.com/kimchanhyung98/bunjang-assistant",
+  "repository": "https://github.com/kimchanhyung98/bunjang-assistant.git",
+  "license": "MIT",
+  "skills": "./skills",
+  "docs": "./docs",
+  "install": "./install",
+  "entrypoints": {
+    "codex": "./.codex-plugin/plugin.json",
+    "codexMarketplace": "./.agents/plugins/marketplace.json",
+    "claude": "./.claude-plugin/plugin.json",
+    "claudeManifest": "./.claude-plugin/manifest.json",
+    "claudeMarketplace": "./.claude-plugin/marketplace.json",
+    "supportMatrix": "./docs/surface-support-matrix.md"
+  },
+  "support": {
+    "codex": [
+      "codex"
+    ],
+    "claude": [
+      "claude"
+    ],
+    "os": [
+      "macos-intel",
+      "macos-apple-silicon"
+    ]
+  }
+}
