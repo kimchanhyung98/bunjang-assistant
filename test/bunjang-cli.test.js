@@ -284,6 +284,29 @@ test("npm run bunjang blocks denied capabilities before spawning bunjang-cli", a
   });
 });
 
+test("npm run bunjang blocks all manual-only and unsupported irreversible actions", async () => {
+  await withTempDir("bunjang-cli-irreversible-", async (dir) => {
+    const fakeBin = join(dir, "should-not-run");
+    await writeFile(
+      fakeBin,
+      "#!/usr/bin/env node\nthrow new Error('denied command should not spawn');\n"
+    );
+    await chmod(fakeBin, 0o755);
+
+    for (const capabilityId of ["purchase.start", "purchase.confirm", "account.settings.update", "auth.login"]) {
+      const result = await runNpmBunjang([capabilityId, "{}"], { BUNJANG_CLI_BIN: fakeBin });
+      assert.equal(result.exitCode, 0, `${capabilityId} stderr: ${result.stderr}`);
+      assert.deepEqual(JSON.parse(result.stdout), { status: "manual_only", capabilityId });
+    }
+
+    for (const capabilityId of ["register", "upload"]) {
+      const result = await runNpmBunjang([capabilityId, "{}"], { BUNJANG_CLI_BIN: fakeBin });
+      assert.notEqual(result.exitCode, 0, capabilityId);
+      assert.match(result.stderr, new RegExp(`Unknown capability: ${capabilityId}`));
+    }
+  });
+});
+
 test("npm run bunjang can call the real bunjang-cli auth.status command", { skip: process.env.BUNJANG_E2E !== "1" }, async () => {
   const result = await runNpmBunjang(["auth.status"]);
 
