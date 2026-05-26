@@ -219,7 +219,7 @@ function buildSearchArgs(command, params) {
 }
 
 function buildAgentSearchRankArgs(command, params) {
-  for (const unsupported of ["withDetail", "ai"]) {
+  for (const unsupported of ["withDetail", "ai", "output", "concurrency"]) {
     if (params[unsupported] !== undefined) {
       throw new Error(`agent-search-rank does not accept ${unsupported}`);
     }
