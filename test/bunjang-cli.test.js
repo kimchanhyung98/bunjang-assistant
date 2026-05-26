@@ -99,6 +99,14 @@ test("denied, unknown, or incomplete work is rejected before spawning bunjang-cl
     () => buildCapabilityArgs("agent-search-rank", { query: "아이폰", ai: true }),
     /agent-search-rank does not accept ai/
   );
+  assert.throws(
+    () => buildCapabilityArgs("agent-search-rank", { query: "아이폰", output: "json" }),
+    /agent-search-rank does not accept output/
+  );
+  assert.throws(
+    () => buildCapabilityArgs("agent-search-rank", { query: "아이폰", concurrency: 2 }),
+    /agent-search-rank does not accept concurrency/
+  );
 });
 
 test("wrapper executes configured commands with --json and parses JSON output", async () => {
