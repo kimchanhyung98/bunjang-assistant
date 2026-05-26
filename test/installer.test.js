@@ -66,14 +66,21 @@ test("installer dry-run plans codex marketplace add followed by plugin add", asy
 
   assert.equal(result.exitCode, 0, result.stderr);
   const parsed = JSON.parse(result.stdout);
-  assert.ok(parsed.steps.includes("codex plugin remove bunjang-assistant@bunjang-assistant"));
-  assert.ok(parsed.steps.includes("codex plugin marketplace remove bunjang-assistant"));
-  assert.ok(
-    parsed.steps.includes(
-      "codex plugin marketplace add --ref main https://github.com/kimchanhyung98/bunjang-assistant.git"
-    )
+  const pluginRemove = parsed.steps.indexOf("codex plugin remove bunjang-assistant@bunjang-assistant");
+  const marketplaceRemove = parsed.steps.indexOf("codex plugin marketplace remove bunjang-assistant");
+  const marketplaceAdd = parsed.steps.indexOf(
+    "codex plugin marketplace add --ref main https://github.com/kimchanhyung98/bunjang-assistant.git"
   );
-  assert.ok(parsed.steps.includes("codex plugin add bunjang-assistant@bunjang-assistant"));
+  const pluginAdd = parsed.steps.indexOf("codex plugin add bunjang-assistant@bunjang-assistant");
+
+  assert.notEqual(pluginRemove, -1, "plugin remove step missing");
+  assert.notEqual(marketplaceRemove, -1, "marketplace remove step missing");
+  assert.notEqual(marketplaceAdd, -1, "marketplace add step missing");
+  assert.notEqual(pluginAdd, -1, "plugin add step missing");
+
+  assert.ok(pluginRemove < marketplaceRemove, "plugin remove must precede marketplace remove");
+  assert.ok(marketplaceRemove < marketplaceAdd, "marketplace remove must precede marketplace add");
+  assert.ok(marketplaceAdd < pluginAdd, "marketplace add must precede plugin add");
 });
 
 test("skill installer symlink idempotency does not require python3", async () => {
