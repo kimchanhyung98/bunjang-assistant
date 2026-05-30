@@ -27,7 +27,7 @@ Default flow:
    - Browser-only login or final posting steps → `skills/bunjang/references/browser.md`
 3. Execute CLI work only through `npx -y github:kimchanhyung98/bunjang-assistant bunjang-assistant-run <capabilityId> '<paramsJson>'`. Capability ids and login policy come from `src/config.js`; do not invent raw `bunjang-cli` flags.
 4. Report each step as `executed`, `login_required`, or `manual_only`. For `login_required`, run `npx -y github:kimchanhyung98/bunjang-assistant bunjang-assistant-run auth.status`; if not logged in, tell the user to finish browser login (the CLI prints the URL) and pause until they confirm.
-5. Hard stops — never perform: `auth.login` itself, final 등록하기, final purchase confirmation, account setting changes, or uploading user photos/credentials to any third-party service.
+5. Hard stops — never perform: `auth.login` itself, starting or confirming a purchase (`purchase.start`, `purchase.confirm`), final 등록하기, account setting changes, or uploading user photos/credentials to any third-party service.
 6. If the user asks for analytics the CLI does not expose, say so plainly and offer the closest supported read-only check (listing search, item detail, favorite list, chat read).
 
 If the request is just `/bunjang` with no task, perform the wrapper-readiness check, then invite the user with a short prompt such as "어떤 번개장터 작업을 도와드릴까요? 예: 시세 확인, 판매글 초안, 채팅 확인." Do not present a setup menu.
