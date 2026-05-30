@@ -57,7 +57,7 @@ test("public bunjang skill routes price and sales draft requests", async () => {
   assert.match(skill, /price\.md/);
   assert.match(skill, /sales\.md/);
   assert.match(skill, /자연어 요청/);
-  assert.match(skill, /`\/bunjang \[작업\]` 슬래시 커맨드로도 진입할 수 있습니다/);
+  assert.match(skill, /`\/bunjang-assistant:bunjang \[작업\]`/);
   assert.match(marketplace, /search-result-fixture\.md/);
   assert.match(fixtureGuide, /fixtures\/search-result\.json/);
   assert.equal(fixture.items[0].listingId, "fixture-1");
@@ -95,7 +95,7 @@ test("installer metadata excludes unsupported surfaces", async () => {
   assert.match(cliUsage, /codex plugin marketplace add --ref main/);
   assert.match(cliUsage, /codex plugin add bunjang-assistant@bunjang-assistant/);
   assert.match(cliUsage, /`--tool cli` 또는 `--install-cli`가 CLI 의존성을 설치합니다/);
-  assert.match(cliUsage, /`\/bunjang \[작업\]` 슬래시 커맨드로 진입/);
+  assert.match(cliUsage, /`\/bunjang-assistant:bunjang \[작업\]`/);
 });
 
 test("runtime docs use the package-selected runner command", async () => {

@@ -20,7 +20,7 @@ description: macOS의 Codex와 Claude AI 에이전트에서 bunjang-assistant와
 - 공개 호출 표면은 이 `bunjang` 하나만 사용합니다.
 - 상세 절차는 내부 참조 문서에서 이어서 확인합니다.
 - `번개장터툴`, `번개장터 도구`, `번장툴`, `bunjang tool`, `bunjang assistant`처럼 짧게 부르면 모두 이 스킬 호출 의도로 해석합니다.
-- Claude 플러그인 표면에서는 `/bunjang [작업]` 슬래시 커맨드로도 진입할 수 있습니다. 그 외 표면에서는 “번장 판매글 작성해줘”, “시세 확인해줘”, “찜했던거 가격 알려줘” 같은 자연어 요청을 직접 처리합니다.
+- Claude Code 플러그인 표면의 정식 슬래시 진입점은 `/bunjang-assistant:bunjang [작업]`입니다. host가 bare command를 따로 노출할 때만 `/bunjang [작업]`을 보조 진입점으로 취급하고, 그 외 표면에서는 “번장 판매글 작성해줘”, “시세 확인해줘”, “찜했던거 가격 알려줘” 같은 자연어 요청을 직접 처리합니다.
 
 사용자 경험 기준:
 

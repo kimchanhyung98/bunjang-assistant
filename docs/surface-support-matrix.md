@@ -7,7 +7,7 @@
 | 표면 | 주요 파일 | 상태 |
 | --- | --- | --- |
 | Codex | `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json`, `skills/bunjang/` | 지원 |
-| Claude | `.claude-plugin/plugin.json`, `skills/bunjang/`, `commands/bunjang.md` | 지원 |
+| Claude | `.claude-plugin/plugin.json`, `skills/bunjang/`, `commands/bunjang.md`, `/bunjang-assistant:bunjang` | 지원 |
 | 패키지 내부 스킬 경로 | `skills/bunjang/` | 내부 구성 |
 | Claude Desktop local MCP | 제공하지 않음 | 범위 밖 |
 | Cursor | 제공하지 않음 | 범위 밖 |
