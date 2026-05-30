@@ -17,8 +17,7 @@
     "codexMarketplace": "./.agents/plugins/marketplace.json",
     "claude": "./.claude-plugin/plugin.json",
     "claudeManifest": "./.claude-plugin/manifest.json",
-    "claudeMarketplace": "./.claude-plugin/marketplace.json",
-    "supportMatrix": "./docs/surface-support-matrix.md"
+    "claudeMarketplace": "./.claude-plugin/marketplace.json"
   },
   "support": {
     "codex": [

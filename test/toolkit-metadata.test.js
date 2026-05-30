@@ -40,8 +40,7 @@ test("root plugin metadata is scoped to Codex, Claude, and macOS", async () => {
     "claudeManifest",
     "claudeMarketplace",
     "codex",
-    "codexMarketplace",
-    "supportMatrix"
+    "codexMarketplace"
   ]);
 });
 
@@ -80,7 +79,6 @@ test("public bunjang skill routes price and sales draft requests", async () => {
 test("installer metadata excludes unsupported surfaces", async () => {
   const installer = await readText("install/bunjang-assistant-install.mjs");
   const installReadme = await readText("install/README.md");
-  const supportMatrix = await readText("docs/surface-support-matrix.md");
   const cliUsage = await readText("skills/bunjang/docs/cli-usage.md");
   const claudePlugin = await readJson(".claude-plugin/plugin.json");
   const claudeManifest = await readJson(".claude-plugin/manifest.json");
@@ -90,8 +88,6 @@ test("installer metadata excludes unsupported surfaces", async () => {
   assert.match(installer, /Cursor, Claude Desktop MCP, Windows, and Linux installers are intentionally out of scope/);
   assert.match(installReadme, /install-skills\.sh/);
   assert.doesNotMatch(installReadme, /install-cli\.sh|install-plugins\.sh|bootstrap-bunjang\.sh/);
-  assert.match(supportMatrix, /Claude Desktop local MCP \| 제공하지 않음 \| 범위 밖/);
-  assert.match(supportMatrix, /commands\/bunjang\.md/);
   assert.equal(claudePlugin.commands, "./commands/");
   assert.equal(claudeManifest.commands, "./commands/");
   assert.deepEqual(claudeMarketplace.owner, { name: "kimchanhyung98" });
