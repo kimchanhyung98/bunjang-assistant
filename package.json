@@ -28,6 +28,7 @@
     ".agents/plugins/marketplace.json",
     ".codex-plugin/**",
     ".claude-plugin/**",
+    "commands/**",
     "docs/**",
     "install/**",
     "skills/bunjang/**",

@@ -19,5 +19,6 @@
     "번개장터도구",
     "agent-toolkit"
   ],
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "commands": "./commands/"
 }

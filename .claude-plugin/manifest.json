@@ -9,5 +9,6 @@
   "homepage": "https://github.com/kimchanhyung98/bunjang-assistant",
   "repository": "https://github.com/kimchanhyung98/bunjang-assistant.git",
   "license": "MIT",
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "commands": "./commands/"
 }

@@ -16,9 +16,9 @@ test("package exposes bunjang-assistant metadata and local binaries", async () =
   assert.equal(pkg.dependencies["bunjang-cli"], "0.2.1");
   assert.ok(pkg.files.includes("install/**"));
   assert.ok(pkg.files.includes("skills/bunjang/**"));
+  assert.ok(pkg.files.includes("commands/**"));
   assert.ok(!pkg.files.includes("README.ko.md"));
   assert.ok(!pkg.files.includes("assets/**"));
-  assert.ok(!pkg.files.includes("commands/**"));
   assert.ok(!pkg.files.includes("examples/**"));
   assert.ok(!pkg.files.includes("products/**"));
   assert.ok(!pkg.files.includes("skills/bunjang/references/ai-context.md"));
@@ -58,7 +58,7 @@ test("public bunjang skill routes price and sales draft requests", async () => {
   assert.match(skill, /price\.md/);
   assert.match(skill, /sales\.md/);
   assert.match(skill, /자연어 요청/);
-  assert.match(skill, /별도 커맨드는 제공하지 않습니다/);
+  assert.match(skill, /`\/bunjang \[작업\]` 슬래시 커맨드로도 진입할 수 있습니다/);
   assert.match(marketplace, /search-result-fixture\.md/);
   assert.match(fixtureGuide, /fixtures\/search-result\.json/);
   assert.equal(fixture.items[0].listingId, "fixture-1");
@@ -91,13 +91,13 @@ test("installer metadata excludes unsupported surfaces", async () => {
   assert.match(installReadme, /install-skills\.sh/);
   assert.doesNotMatch(installReadme, /install-cli\.sh|install-plugins\.sh|bootstrap-bunjang\.sh/);
   assert.match(supportMatrix, /Claude Desktop local MCP \| 제공하지 않음 \| 범위 밖/);
-  assert.doesNotMatch(supportMatrix, /commands\/bunjang\.md/);
-  assert.equal(claudePlugin.commands, undefined);
-  assert.equal(claudeManifest.commands, undefined);
+  assert.match(supportMatrix, /commands\/bunjang\.md/);
+  assert.equal(claudePlugin.commands, "./commands/");
+  assert.equal(claudeManifest.commands, "./commands/");
   assert.deepEqual(claudeMarketplace.owner, { name: "kimchanhyung98" });
   assert.equal(claudeMarketplace.plugins[0].source, "./");
   assert.match(cliUsage, /node install\/bunjang-assistant-install\.mjs --tool codex --dry-run/);
-  assert.match(cliUsage, /별도 명령어를 제공하지 않고/);
+  assert.match(cliUsage, /`\/bunjang \[작업\]` 슬래시 커맨드로 진입/);
 });
 
 async function readJson(path) {
