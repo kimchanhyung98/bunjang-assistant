@@ -5,7 +5,7 @@
 ## 공통 시작점
 
 ```bash
-npx -y github:kimchanhyung98/bunjang-assistant bunjang-assistant-run auth.status
+npx -y --package=github:kimchanhyung98/bunjang-assistant bunjang-assistant-run auth.status
 ```
 
 ## 대표 capability
