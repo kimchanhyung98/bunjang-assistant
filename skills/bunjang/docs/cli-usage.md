@@ -23,12 +23,28 @@ npm run bunjang -- purchase.prepare '{"listingId":"123456"}'
 
 ## 설치 메타데이터
 
-```bash
-node install/bunjang-assistant-install.mjs --tool cli
-node install/bunjang-assistant-install.mjs --tool codex --dry-run
-node install/bunjang-assistant-install.mjs --tool claude --dry-run
-node install/bunjang-assistant-install.mjs --tool both --dry-run
+Claude Code에서는 채팅창에 슬래시 명령으로 plugin install을 실행합니다.
+
+```text
+/plugin marketplace add kimchanhyung98/bunjang-assistant
+/plugin install bunjang-assistant@bunjang-assistant
 ```
+
+Codex에서는 마켓플레이스를 등록한 뒤 Plugins UI에서 활성화합니다.
+
+```bash
+codex plugin marketplace add --ref main https://github.com/kimchanhyung98/bunjang-assistant.git
+codex plugin add bunjang-assistant@bunjang-assistant
+```
+
+스킬만 별도로 복사해야 할 때만 헬퍼를 사용합니다.
+
+```bash
+./install/install-skills.sh --tool codex --scope user
+./install/install-skills.sh --tool claude --scope user
+```
+
+Node 설치기는 CLI 준비나 dry-run 검증이 필요할 때만 사용합니다. `--tool cli` 또는 `--install-cli`가 CLI 의존성을 설치합니다.
 
 ## 원칙
 

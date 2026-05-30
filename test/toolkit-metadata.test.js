@@ -96,7 +96,9 @@ test("installer metadata excludes unsupported surfaces", async () => {
   assert.equal(claudeManifest.commands, "./commands/");
   assert.deepEqual(claudeMarketplace.owner, { name: "kimchanhyung98" });
   assert.equal(claudeMarketplace.plugins[0].source, "./");
-  assert.match(cliUsage, /node install\/bunjang-assistant-install\.mjs --tool codex --dry-run/);
+  assert.match(cliUsage, /codex plugin marketplace add --ref main/);
+  assert.match(cliUsage, /codex plugin add bunjang-assistant@bunjang-assistant/);
+  assert.match(cliUsage, /`--tool cli` 또는 `--install-cli`가 CLI 의존성을 설치합니다/);
   assert.match(cliUsage, /`\/bunjang \[작업\]` 슬래시 커맨드로 진입/);
 });
 

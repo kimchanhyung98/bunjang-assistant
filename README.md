@@ -6,12 +6,25 @@
 
 ## 설치
 
-Codex 또는 Claude CLI가 설치된 상태에서 실행합니다.
+Claude Code에서는 채팅창에 아래 두 줄을 입력합니다.
+
+```text
+/plugin marketplace add kimchanhyung98/bunjang-assistant
+/plugin install bunjang-assistant@bunjang-assistant
+```
+
+Codex에서는 마켓플레이스를 등록한 뒤 Plugins UI에서 `bunjang-assistant`를 추가합니다.
 
 ```bash
-node install/bunjang-assistant-install.mjs --tool codex
-node install/bunjang-assistant-install.mjs --tool claude
-node install/bunjang-assistant-install.mjs --tool both
+codex plugin marketplace add kimchanhyung98/bunjang-assistant --ref main
+```
+
+CLI 래퍼 준비나 dry-run 검증이 필요할 때만 Node 설치기를 보조로 씁니다.
+
+```bash
+node install/bunjang-assistant-install.mjs --tool cli
+node install/bunjang-assistant-install.mjs --tool claude --dry-run
+node install/bunjang-assistant-install.mjs --tool codex --dry-run
 ```
 
 ## 사용
