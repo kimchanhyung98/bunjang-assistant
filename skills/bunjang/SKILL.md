@@ -20,7 +20,7 @@ description: macOS의 Codex와 Claude AI 에이전트에서 bunjang-assistant와
 - 공개 호출 표면은 이 `bunjang` 하나만 사용합니다.
 - 상세 절차는 내부 참조 문서에서 이어서 확인합니다.
 - `번개장터툴`, `번개장터 도구`, `번장툴`, `bunjang tool`, `bunjang assistant`처럼 짧게 부르면 모두 이 스킬 호출 의도로 해석합니다.
-- `/bunjang` 같은 별도 커맨드는 제공하지 않습니다. “번장 판매글 작성해줘”, “시세 확인해줘”, “찜했던거 가격 알려줘” 같은 자연어 요청을 직접 처리합니다.
+- Claude Code 플러그인 표면의 정식 슬래시 진입점은 `/bunjang-assistant:bunjang [작업]`입니다. host가 bare command를 따로 노출할 때만 `/bunjang [작업]`을 보조 진입점으로 취급하고, 그 외 표면에서는 “번장 판매글 작성해줘”, “시세 확인해줘”, “찜했던거 가격 알려줘” 같은 자연어 요청을 직접 처리합니다.
 
 사용자 경험 기준:
 
@@ -31,12 +31,11 @@ description: macOS의 Codex와 Claude AI 에이전트에서 bunjang-assistant와
 
 기본 시작점:
 
-1. repo 루트에서 작업합니다.
-2. `node_modules/.bin/bunjang-cli`가 없으면 `npm install`을 실행합니다.
-3. 준비 확인은 `npm run bunjang -- auth.status`로 합니다.
-4. CLI 작업은 항상 `npm run bunjang -- <capabilityId> '<paramsJson>'`를 사용합니다.
-5. `src/config.js`에 등록되지 않은 원시 `bunjang-cli` 명령은 직접 조합하지 않습니다.
-6. `executed`, `login_required`, `manual_only` 상태를 구분해 보고합니다.
+1. 첫 실행은 CLI를 내려받아 준비하느라 수십 초~수 분 걸릴 수 있습니다. 사용자에게 먼저 알리고 진행합니다.
+2. 준비 확인은 `npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run auth.status`로 합니다.
+3. CLI 작업은 항상 `npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run <capabilityId> '<paramsJson>'`를 사용합니다.
+4. `src/config.js`에 등록되지 않은 원시 `bunjang-cli` 명령은 직접 조합하지 않습니다.
+5. `executed`, `login_required`, `manual_only` 상태를 구분해 보고합니다.
 
 도메인 라우팅:
 
@@ -50,14 +49,14 @@ description: macOS의 Codex와 Claude AI 에이전트에서 bunjang-assistant와
 
 - public read는 로그인 없이 실행합니다.
 - 채팅, 관심상품 변경, 구매 가능 여부 확인은 래퍼의 로그인 사전 확인을 따릅니다.
-- `auth.login`, 최종 구매, 최종 판매글 등록, 계정 설정 변경은 수동 전용입니다.
+- `auth.login`, 구매 시작·확정, 최종 판매글 등록, 계정 설정 변경은 수동 전용입니다.
 - 판매글 자동화는 되돌릴 수 있는 초안 입력까지만 수행합니다.
 - 문서와 `src/config.js`에 없는 기능, 숨은 파라미터, 관리자 UI 절차는 추정하지 않습니다.
 
 하드 스톱:
 
 - `등록하기`를 누르지 않습니다.
-- 최종 구매 확정을 실행하지 않습니다.
+- 구매 시작과 최종 확정을 실행하지 않습니다.
 - 계정 설정을 변경하지 않습니다.
 - 사용자 촬영 사진, 로그인 정보, 계정 정보는 번개장터 판매글 입력 외 제3자 서비스(이미지 호스팅, 외부 분석/OCR API, 클라우드 저장소 등)에 업로드하지 않습니다.
 - 고객/클라이언트용 기업 표면, Cursor, Desktop MCP, 호스팅 문서, 다국어 릴리스, 스케줄러를 추가하지 않습니다.

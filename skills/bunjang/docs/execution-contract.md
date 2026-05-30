@@ -11,21 +11,19 @@
 
 ## 필수 문맥
 
-- 현재 실행 경로가 repo 루트인지
-- `node_modules/.bin/bunjang-cli` 존재 여부
+- CLI 준비 여부(첫 실행은 내려받기/설치로 지연될 수 있음)
 - 인증 상태
 - 요청이 read인지, 상태 변경인지, 수동 전용인지
 
 ## CLI 준비 확인
 
 ```bash
-npm install
-npm run bunjang -- auth.status
+npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run auth.status
 ```
 
 ## 실행 규약
 
-- `npm run bunjang -- <capabilityId> '<paramsJson>'`만 사용합니다.
+- `npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run <capabilityId> '<paramsJson>'`만 사용합니다.
 - 래퍼가 `--json`을 붙이고, capability ID를 실제 `bunjang-cli` 인자로 변환합니다.
 - JSON이 아닌 출력은 사용 가능한 데이터가 아니라 조사해야 할 실패로 봅니다.
 - 실패 메시지에는 capability ID와 주요 입력을 함께 보고합니다.

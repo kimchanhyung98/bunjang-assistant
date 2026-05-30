@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { fileURLToPath } from "node:url";
+import { realpathSync } from "node:fs";
 import { createBunjangCli, executeCapability } from "./cli.js";
 import { getRuntimeConfig } from "./config.js";
 
@@ -11,7 +12,9 @@ export async function runCli(
   const [capabilityId, paramsJson] = args;
 
   if (!capabilityId) {
-    throw new Error("Usage: npm run bunjang -- <capabilityId> [paramsJson]");
+    throw new Error(
+      "Usage: bunjang-assistant-run <capabilityId> [paramsJson] (local clone: npm run bunjang -- <capabilityId> [paramsJson])"
+    );
   }
 
   const params = parseParams(paramsJson);
@@ -57,5 +60,8 @@ if (isDirectRun(import.meta.url)) {
 }
 
 function isDirectRun(moduleUrl) {
-  return process.argv[1] && fileURLToPath(moduleUrl) === process.argv[1];
+  return (
+    process.argv[1] &&
+    realpathSync(fileURLToPath(moduleUrl)) === realpathSync(process.argv[1])
+  );
 }

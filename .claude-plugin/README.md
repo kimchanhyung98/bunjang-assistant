@@ -6,4 +6,7 @@
 
 - `.claude-plugin/plugin.json`
 - `.claude-plugin/manifest.json`
+- `commands/bunjang.md`
 - `skills/bunjang/SKILL.md`
+
+Claude Code 플러그인에서 검증 가능한 슬래시 진입점은 `/bunjang-assistant:bunjang`입니다.

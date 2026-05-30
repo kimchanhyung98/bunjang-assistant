@@ -42,7 +42,7 @@ Options:
   --with-skill                Also install the public bunjang skill discovery bundle.
   --no-skill                  Skip skill discovery install.
   --install-cli               Run npm install before surface wiring.
-  --no-install-cli            Skip dependency install/update.
+  --no-install-cli            Skip dependency install/update. This is the default for plugin surfaces.
   --source SOURCE             Marketplace source. Default: ${PUBLIC_GIT_SOURCE}
   --ref REF                   Git ref for Codex marketplace add. Default: ${PUBLIC_GIT_REF}
   --no-replace                Do not replace existing copied skill paths.
@@ -53,7 +53,7 @@ Options:
 Notes:
   - Supported runtime targets are macOS Intel and Apple Silicon.
   - Supported AI surfaces are Codex and Claude.
-  - Codex/Claude installs also prepare the local CLI wrapper by default; use --no-install-cli to skip it.
+  - Codex/Claude installs wire skills and plugins by default; use --install-cli to also prepare the local CLI wrapper.
   - Cursor, Claude Desktop MCP, Windows, and Linux installers are intentionally out of scope.
   - The CLI execution engine remains bunjang-cli through this repo's wrapper.`);
 }
@@ -272,7 +272,7 @@ function shouldInstallSkill(opts) {
 function shouldInstallCli(opts) {
   if (opts.skipCli) return false;
   if (opts.installCli || opts.tool === "cli") return true;
-  return ["codex", "claude", "both"].includes(opts.tool);
+  return false;
 }
 
 function installCli(opts) {

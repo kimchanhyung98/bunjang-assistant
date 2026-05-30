@@ -7,6 +7,7 @@ test("package exposes bunjang-assistant metadata and local binaries", async () =
   const pkg = await readJson("package.json");
 
   assert.equal(pkg.name, "bunjang-assistant");
+  assert.equal(pkg.version, "0.4.0");
   assert.equal(pkg.private, true);
   assert.deepEqual(pkg.bin, {
     "bunjang-assistant": "./install/bunjang-assistant-install.mjs",
@@ -16,9 +17,9 @@ test("package exposes bunjang-assistant metadata and local binaries", async () =
   assert.equal(pkg.dependencies["bunjang-cli"], "0.2.1");
   assert.ok(pkg.files.includes("install/**"));
   assert.ok(pkg.files.includes("skills/bunjang/**"));
+  assert.ok(pkg.files.includes("commands/**"));
   assert.ok(!pkg.files.includes("README.ko.md"));
   assert.ok(!pkg.files.includes("assets/**"));
-  assert.ok(!pkg.files.includes("commands/**"));
   assert.ok(!pkg.files.includes("examples/**"));
   assert.ok(!pkg.files.includes("products/**"));
   assert.ok(!pkg.files.includes("skills/bunjang/references/ai-context.md"));
@@ -29,6 +30,7 @@ test("root plugin metadata is scoped to Codex, Claude, and macOS", async () => {
   const plugin = await readJson("plugin.json");
 
   assert.equal(plugin.name, "bunjang-assistant");
+  assert.equal(plugin.version, "0.4.0");
   assert.deepEqual(plugin.support.codex, ["codex"]);
   assert.deepEqual(plugin.support.claude, ["claude"]);
   assert.deepEqual(plugin.support.os, ["macos-intel", "macos-apple-silicon"]);
@@ -40,8 +42,7 @@ test("root plugin metadata is scoped to Codex, Claude, and macOS", async () => {
     "claudeManifest",
     "claudeMarketplace",
     "codex",
-    "codexMarketplace",
-    "supportMatrix"
+    "codexMarketplace"
   ]);
 });
 
@@ -58,7 +59,7 @@ test("public bunjang skill routes price and sales draft requests", async () => {
   assert.match(skill, /price\.md/);
   assert.match(skill, /sales\.md/);
   assert.match(skill, /자연어 요청/);
-  assert.match(skill, /별도 커맨드는 제공하지 않습니다/);
+  assert.match(skill, /`\/bunjang-assistant:bunjang \[작업\]`/);
   assert.match(marketplace, /search-result-fixture\.md/);
   assert.match(fixtureGuide, /fixtures\/search-result\.json/);
   assert.equal(fixture.items[0].listingId, "fixture-1");
@@ -79,8 +80,9 @@ test("public bunjang skill routes price and sales draft requests", async () => {
 
 test("installer metadata excludes unsupported surfaces", async () => {
   const installer = await readText("install/bunjang-assistant-install.mjs");
+  const readme = await readText("README.md");
+  const aiInstall = await readText("docs/ai-agent-installation.md");
   const installReadme = await readText("install/README.md");
-  const supportMatrix = await readText("docs/surface-support-matrix.md");
   const cliUsage = await readText("skills/bunjang/docs/cli-usage.md");
   const claudePlugin = await readJson(".claude-plugin/plugin.json");
   const claudeManifest = await readJson(".claude-plugin/manifest.json");
@@ -90,14 +92,45 @@ test("installer metadata excludes unsupported surfaces", async () => {
   assert.match(installer, /Cursor, Claude Desktop MCP, Windows, and Linux installers are intentionally out of scope/);
   assert.match(installReadme, /install-skills\.sh/);
   assert.doesNotMatch(installReadme, /install-cli\.sh|install-plugins\.sh|bootstrap-bunjang\.sh/);
-  assert.match(supportMatrix, /Claude Desktop local MCP \| 제공하지 않음 \| 범위 밖/);
-  assert.doesNotMatch(supportMatrix, /commands\/bunjang\.md/);
-  assert.equal(claudePlugin.commands, undefined);
-  assert.equal(claudeManifest.commands, undefined);
+  assert.equal(claudePlugin.commands, "./commands/");
+  assert.equal(claudePlugin.version, "0.4.0");
+  assert.equal(claudeManifest.commands, "./commands/");
+  assert.equal(claudeManifest.version, "0.4.0");
   assert.deepEqual(claudeMarketplace.owner, { name: "kimchanhyung98" });
   assert.equal(claudeMarketplace.plugins[0].source, "./");
-  assert.match(cliUsage, /node install\/bunjang-assistant-install\.mjs --tool codex --dry-run/);
-  assert.match(cliUsage, /별도 명령어를 제공하지 않고/);
+  assert.equal(claudeMarketplace.plugins[0].version, "0.4.0");
+  assert.match(readme, /codex plugin marketplace add --ref main https:\/\/github\.com\/kimchanhyung98\/bunjang-assistant\.git/);
+  assert.match(readme, /codex plugin add bunjang-assistant@bunjang-assistant/);
+  assert.match(aiInstall, /codex plugin marketplace add --ref main https:\/\/github\.com\/kimchanhyung98\/bunjang-assistant\.git/);
+  assert.match(aiInstall, /codex plugin add bunjang-assistant@bunjang-assistant/);
+  assert.match(installReadme, /codex plugin marketplace add --ref main https:\/\/github\.com\/kimchanhyung98\/bunjang-assistant\.git/);
+  assert.match(installReadme, /codex plugin add bunjang-assistant@bunjang-assistant/);
+  assert.match(cliUsage, /codex plugin marketplace add --ref main/);
+  assert.match(cliUsage, /codex plugin add bunjang-assistant@bunjang-assistant/);
+  assert.match(cliUsage, /`--tool cli` 또는 `--install-cli`가 CLI 의존성을 설치합니다/);
+  assert.match(cliUsage, /`\/bunjang-assistant:bunjang \[작업\]`/);
+});
+
+test("runtime docs use the package-selected runner command", async () => {
+  const oldRunnerPattern = /npx -y github:kimchanhyung98\/bunjang-assistant bunjang-assistant-run/;
+  const packageRunnerPattern = /npx -y --package=github:kimchanhyung98\/bunjang-assistant -- bunjang-assistant-run/;
+  const docs = [
+    "commands/bunjang.md",
+    "docs/cli-toolkit-integration.md",
+    "skills/bunjang/SKILL.md",
+    "skills/bunjang/docs/capability-registry.md",
+    "skills/bunjang/docs/cli-usage.md",
+    "skills/bunjang/docs/execution-contract.md",
+    "skills/bunjang/references/browser.md",
+    "skills/bunjang/references/marketplace.md",
+    "skills/bunjang/references/price.md"
+  ];
+
+  for (const path of docs) {
+    const text = await readText(path);
+    assert.doesNotMatch(text, oldRunnerPattern, path);
+    assert.match(text, packageRunnerPattern, path);
+  }
 });
 
 async function readJson(path) {

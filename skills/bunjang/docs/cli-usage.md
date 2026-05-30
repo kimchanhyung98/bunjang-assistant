@@ -1,34 +1,51 @@
 # CLI 사용 빠른 안내
 
-이 문서는 설치된 번들 안에서 빠르게 다시 볼 최소 CLI 사용 안내서입니다. 사용자에게 `/bunjang` 같은 별도 명령어를 제공하지 않고, 자연어 요청을 스킬이 해석한 뒤 필요한 경우에만 래퍼를 실행합니다.
+이 문서는 설치된 번들 안에서 빠르게 다시 볼 최소 CLI 사용 안내서입니다. Claude Code 플러그인 표면의 정식 슬래시 진입점은 `/bunjang-assistant:bunjang [작업]`입니다. host가 bare command를 따로 노출할 때만 `/bunjang [작업]`을 보조 진입점으로 취급하고, 그 외에는 자연어 요청을 그대로 보낼 수 있습니다. 둘 모두 같은 스킬이 해석한 뒤 필요한 경우에만 래퍼를 실행합니다.
 
 ## 공통 시작점
 
 ```bash
-npm install
-npm run bunjang -- auth.status
+npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run auth.status
 ```
 
 ## 대표 capability
 
+`npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run` 뒤에 capability ID와 paramsJson을 붙입니다.
+
 ```bash
-npm run bunjang -- search.listings '{"query":"아이폰","maxItems":20,"withDetail":true}'
-npm run bunjang -- agent-search-rank '{"query":"아이폰","maxItems":10}'
-npm run bunjang -- item.get '{"listingId":"123456"}'
-npm run bunjang -- item.list '{"listingIds":["123456","789012"]}'
-npm run bunjang -- chat.list
-npm run bunjang -- favorite.list
-npm run bunjang -- purchase.prepare '{"listingId":"123456"}'
+npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run search.listings '{"query":"아이폰","maxItems":20,"withDetail":true}'
+npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run agent-search-rank '{"query":"아이폰","maxItems":10}'
+npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run item.get '{"listingId":"123456"}'
+npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run item.list '{"listingIds":["123456","789012"]}'
+npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run chat.list
+npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run favorite.list
+npx -y --package=github:kimchanhyung98/bunjang-assistant -- bunjang-assistant-run purchase.prepare '{"listingId":"123456"}'
 ```
 
 ## 설치 메타데이터
 
-```bash
-node install/bunjang-assistant-install.mjs --tool cli
-node install/bunjang-assistant-install.mjs --tool codex --dry-run
-node install/bunjang-assistant-install.mjs --tool claude --dry-run
-node install/bunjang-assistant-install.mjs --tool both --dry-run
+Claude Code에서는 채팅창에 슬래시 명령으로 plugin install을 실행합니다.
+
+```text
+/plugin marketplace add kimchanhyung98/bunjang-assistant
+/plugin install bunjang-assistant@bunjang-assistant
 ```
+
+Codex에서는 마켓플레이스를 등록한 뒤 플러그인을 추가합니다.
+
+```bash
+codex plugin marketplace add --ref main https://github.com/kimchanhyung98/bunjang-assistant.git
+codex plugin add bunjang-assistant@bunjang-assistant
+```
+
+스킬만 별도로 복사해야 할 때만 헬퍼를 사용합니다.
+
+```bash
+./install/install-skills.sh --tool codex --scope user
+./install/install-skills.sh --tool claude --scope user
+```
+
+Node 설치기는 CLI 준비나 dry-run 검증이 필요할 때만 사용합니다. `--tool cli` 또는 `--install-cli`가 CLI 의존성을 설치합니다.
 
 ## 원칙
 

@@ -1,23 +1,42 @@
 # AI 에이전트 설치
 
-## 로컬 클론
+기본 경로는 호스트 에이전트의 plugin install입니다. Node 설치기는 CLI 래퍼 준비나 dry-run 검증에만 보조로 사용합니다.
+
+## Claude Code
+
+채팅창에 아래 두 줄을 입력합니다.
+
+```text
+/plugin marketplace add kimchanhyung98/bunjang-assistant
+/plugin install bunjang-assistant@bunjang-assistant
+```
+
+## Codex
+
+```bash
+codex plugin marketplace add --ref main https://github.com/kimchanhyung98/bunjang-assistant.git
+codex plugin add bunjang-assistant@bunjang-assistant
+```
+
+CLI를 사용할 수 없는 환경에서는 마켓플레이스 등록 후 Codex의 Plugins UI에서 `bunjang-assistant`를 추가합니다.
+
+## 로컬 클론 검증
 
 ```bash
 npm install
 npm test
 ```
 
-## 설치 진입점
+## 보조 설치 진입점
 
 ```bash
 node install/bunjang-assistant-install.mjs --tool cli
-node install/bunjang-assistant-install.mjs --tool codex
-node install/bunjang-assistant-install.mjs --tool claude
-node install/bunjang-assistant-install.mjs --tool both
+node install/bunjang-assistant-install.mjs --tool codex --dry-run
+node install/bunjang-assistant-install.mjs --tool claude --dry-run
+node install/bunjang-assistant-install.mjs --tool both --dry-run
 ```
 
-플러그인 연결을 검증할 때는 먼저 `--dry-run`을 사용합니다.
-Codex와 Claude 설치는 기본적으로 CLI 의존성 설치와 `auth.status` 확인을 먼저 수행합니다. 표면 연결만 확인하려면 `--no-install-cli`를 함께 사용합니다.
+`--tool cli` 또는 `--install-cli`가 CLI 래퍼 의존성을 설치합니다. plugin install 흐름을 모사 검증할 때는 `--dry-run`을 함께 사용합니다.
 
 ## 설치 범위
 
