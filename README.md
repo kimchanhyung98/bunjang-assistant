@@ -13,10 +13,11 @@ Claude Code에서는 채팅창에 아래 두 줄을 입력합니다.
 /plugin install bunjang-assistant@bunjang-assistant
 ```
 
-Codex에서는 마켓플레이스를 등록한 뒤 Plugins UI에서 `bunjang-assistant`를 추가합니다.
+Codex에서는 마켓플레이스를 등록한 뒤 플러그인을 추가합니다.
 
 ```bash
-codex plugin marketplace add kimchanhyung98/bunjang-assistant --ref main
+codex plugin marketplace add --ref main https://github.com/kimchanhyung98/bunjang-assistant.git
+codex plugin add bunjang-assistant@bunjang-assistant
 ```
 
 CLI 래퍼 준비나 dry-run 검증이 필요할 때만 Node 설치기를 보조로 씁니다.

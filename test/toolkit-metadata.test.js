@@ -78,6 +78,8 @@ test("public bunjang skill routes price and sales draft requests", async () => {
 
 test("installer metadata excludes unsupported surfaces", async () => {
   const installer = await readText("install/bunjang-assistant-install.mjs");
+  const readme = await readText("README.md");
+  const aiInstall = await readText("docs/ai-agent-installation.md");
   const installReadme = await readText("install/README.md");
   const cliUsage = await readText("skills/bunjang/docs/cli-usage.md");
   const claudePlugin = await readJson(".claude-plugin/plugin.json");
@@ -92,6 +94,12 @@ test("installer metadata excludes unsupported surfaces", async () => {
   assert.equal(claudeManifest.commands, "./commands/");
   assert.deepEqual(claudeMarketplace.owner, { name: "kimchanhyung98" });
   assert.equal(claudeMarketplace.plugins[0].source, "./");
+  assert.match(readme, /codex plugin marketplace add --ref main https:\/\/github\.com\/kimchanhyung98\/bunjang-assistant\.git/);
+  assert.match(readme, /codex plugin add bunjang-assistant@bunjang-assistant/);
+  assert.match(aiInstall, /codex plugin marketplace add --ref main https:\/\/github\.com\/kimchanhyung98\/bunjang-assistant\.git/);
+  assert.match(aiInstall, /codex plugin add bunjang-assistant@bunjang-assistant/);
+  assert.match(installReadme, /codex plugin marketplace add --ref main https:\/\/github\.com\/kimchanhyung98\/bunjang-assistant\.git/);
+  assert.match(installReadme, /codex plugin add bunjang-assistant@bunjang-assistant/);
   assert.match(cliUsage, /codex plugin marketplace add --ref main/);
   assert.match(cliUsage, /codex plugin add bunjang-assistant@bunjang-assistant/);
   assert.match(cliUsage, /`--tool cli` 또는 `--install-cli`가 CLI 의존성을 설치합니다/);

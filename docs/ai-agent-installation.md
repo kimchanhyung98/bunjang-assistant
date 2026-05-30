@@ -14,10 +14,11 @@
 ## Codex
 
 ```bash
-codex plugin marketplace add kimchanhyung98/bunjang-assistant --ref main
+codex plugin marketplace add --ref main https://github.com/kimchanhyung98/bunjang-assistant.git
+codex plugin add bunjang-assistant@bunjang-assistant
 ```
 
-이후 Codex의 Plugins UI에서 `bunjang-assistant`를 추가합니다.
+CLI를 사용할 수 없는 환경에서는 마켓플레이스 등록 후 Codex의 Plugins UI에서 `bunjang-assistant`를 추가합니다.
 
 ## 로컬 클론 검증
 

@@ -5,7 +5,7 @@
 기본 설치 경로는 호스트 에이전트의 plugin install입니다.
 
 - Claude Code: 채팅창에 `/plugin marketplace add kimchanhyung98/bunjang-assistant` → `/plugin install bunjang-assistant@bunjang-assistant`
-- Codex: `codex plugin marketplace add kimchanhyung98/bunjang-assistant --ref main` 뒤 Plugins UI에서 추가
+- Codex: `codex plugin marketplace add --ref main https://github.com/kimchanhyung98/bunjang-assistant.git` 뒤 `codex plugin add bunjang-assistant@bunjang-assistant`
 
 여기의 Node 설치기는 CLI 래퍼 준비나 dry-run 검증이 필요할 때만 보조로 사용합니다.
 
