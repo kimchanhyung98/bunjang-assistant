@@ -11,7 +11,9 @@ export async function runCli(
   const [capabilityId, paramsJson] = args;
 
   if (!capabilityId) {
-    throw new Error("Usage: npm run bunjang -- <capabilityId> [paramsJson]");
+    throw new Error(
+      "Usage: bunjang-assistant-run <capabilityId> [paramsJson] (local clone: npm run bunjang -- <capabilityId>)"
+    );
   }
 
   const params = parseParams(paramsJson);

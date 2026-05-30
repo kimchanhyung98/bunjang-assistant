@@ -31,12 +31,11 @@ description: macOS의 Codex와 Claude AI 에이전트에서 bunjang-assistant와
 
 기본 시작점:
 
-1. repo 루트에서 작업합니다.
-2. `node_modules/.bin/bunjang-cli`가 없으면 `npm install`을 실행합니다.
-3. 준비 확인은 `npm run bunjang -- auth.status`로 합니다.
-4. CLI 작업은 항상 `npm run bunjang -- <capabilityId> '<paramsJson>'`를 사용합니다.
-5. `src/config.js`에 등록되지 않은 원시 `bunjang-cli` 명령은 직접 조합하지 않습니다.
-6. `executed`, `login_required`, `manual_only` 상태를 구분해 보고합니다.
+1. 첫 실행은 CLI를 내려받아 준비하느라 수십 초~수 분 걸릴 수 있습니다. 사용자에게 먼저 알리고 진행합니다.
+2. 준비 확인은 `npx -y github:kimchanhyung98/bunjang-assistant bunjang-assistant-run auth.status`로 합니다.
+3. CLI 작업은 항상 `npx -y github:kimchanhyung98/bunjang-assistant bunjang-assistant-run <capabilityId> '<paramsJson>'`를 사용합니다.
+4. `src/config.js`에 등록되지 않은 원시 `bunjang-cli` 명령은 직접 조합하지 않습니다.
+5. `executed`, `login_required`, `manual_only` 상태를 구분해 보고합니다.
 
 도메인 라우팅:
 

@@ -4,6 +4,14 @@
 
 ## 래퍼 명령
 
+에이전트/플러그인 런타임(설치 없이 어디서나):
+
+```bash
+npx -y github:kimchanhyung98/bunjang-assistant bunjang-assistant-run <capabilityId> '<paramsJson>'
+```
+
+레포를 clone한 로컬 개발:
+
 ```bash
 npm run bunjang -- <capabilityId> '<paramsJson>'
 ```
